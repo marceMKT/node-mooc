@@ -74,7 +74,7 @@ describe("mooc_node-mod4_file_reflex", function () {
             this.msg_err = error_critical;
             should.not.exist(error_critical);
         } else {
-            const expected = /exports\.quote_of_the_day/;
+            const expected = "quote_of_the_day";
             const output = fs.readFileSync(path.join(path_assignment, 'mod4_quote_of_the_day.js'), "utf8");
             this.msg_ok = `Found '${expected}' in '${path.join(path_assignment, 'mod4_quote_of_the_day.js')}'`;
             this.msg_err = `Couldn't find '${expected}' in '${path.join(path_assignment, 'mod4_quote_of_the_day.js')}'`;

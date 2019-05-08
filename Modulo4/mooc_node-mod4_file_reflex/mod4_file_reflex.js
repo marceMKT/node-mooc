@@ -1,8 +1,6 @@
 
     // Imports user module mod4-quote_of_the_day.js
-let my_mod = require("./mod4-quote_of_the_day");
-
-let fs = require("fs");   // Imports file system module
+let my_mod = require("./mod4_quote_of_the_day");
 
 console.log();
 my_mod.quote_of_the_day();
@@ -12,7 +10,14 @@ setTimeout(reflexes, delay);
 
 
 function reflexes() {
-
-    // ... include code here
+	console.log();
+	console.log("Press return:");
+	let init = Date.now();
+	process.stdin.resume();
+	process.stdin.setEncoding('utf8');
+	process.stdin.on('data', function (key) {
+		console.log();
+		console.log(`Your time is: ${Date.now() - init}ms`);
+		process.exit();
+	});
 };
-
