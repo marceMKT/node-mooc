@@ -4,6 +4,8 @@ const {log, biglog, errorlog, colorize} = require("./out");
 
 const model = require('./model');
 
+const CORRECTA = "correcta";
+const INCORRECTA = "incorrecta";
 
 /**
  * Muestra la ayuda.
@@ -151,8 +153,43 @@ exports.editCmd = (rl, id) => {
  * @param id Clave del quiz a probar.
  */
 exports.testCmd = (rl, id) => {
-    log('Probar el quiz indicado.', 'red');
-    rl.prompt();
+    if (typeof id === "undefined") {
+        errorlog(`Falta el parámetro id.`);
+        rl.prompt();
+    } else {
+        try {
+            const quiz = model.getByIndex(id);
+            rl.question(colorize(quiz.question + '? ', 'red'), answer => {
+                printResult(checkResult(answer, quiz.answer));
+                rl.prompt();
+            });
+        } catch(error) {
+            errorlog(error.message);
+            rl.prompt();
+        }
+    }
+};
+
+const checkResult = (userAnswer, correctAnwser) => {
+    if (userAnswer.toLowerCase().trim() === correctAnwser.toLowerCase()){
+        return CORRECTA;
+    }
+    else{
+        return INCORRECTA;
+    }
+};
+
+const printResult = (result) => {
+    let color;
+    if (result === CORRECTA){
+        color = 'green';
+    }
+    else{
+        color = 'red';
+    }
+    log(`Su respuesta es ${result}`);
+    biglog(`${result.charAt(0).toUpperCase() + result.slice(1)}`, color);
+                
 };
 
 
@@ -174,9 +211,8 @@ exports.playCmd = rl => {
  * @param rl Objeto readline usado para implementar el CLI.
  */
 exports.creditsCmd = rl => {
-    log('Autores de la práctica:');
-    log('Nombre 1', 'green');
-    log('Nombre 2', 'green');
+    log('Autor de la práctica:');
+    log('Marcelino López Pastrana', 'green');
     rl.prompt();
 };
 
