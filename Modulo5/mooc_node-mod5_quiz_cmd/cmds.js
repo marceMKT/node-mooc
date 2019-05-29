@@ -160,7 +160,7 @@ exports.testCmd = (rl, id) => {
         try {
             const quiz = model.getByIndex(id);
             rl.question(colorize(quiz.question + '? ', 'red'), answer => {
-                printResult(checkResult(answer, quiz.answer));
+                printResultTest(checkResult(answer, quiz.answer));
                 rl.prompt();
             });
         } catch(error) {
@@ -179,7 +179,7 @@ const checkResult = (userAnswer, correctAnwser) => {
     }
 };
 
-const printResult = (result) => {
+const printResultTest = (result) => {
     let color;
     if (result === CORRECTA){
         color = 'green';
@@ -200,7 +200,39 @@ const printResult = (result) => {
  * @param rl Objeto readline usado para implementar el CLI.
  */
 exports.playCmd = rl => {
-    log('Jugar.', 'red');
+
+    let numQuestionCorrect = 0;
+    let idQuickToAsk = [];
+
+    Object.keys(model.getAll()).forEach(indexQuizz => idQuickToAsk.push(indexQuizz));
+    
+    const playOne = () => {
+        if (idQuickToAsk.length === 0){
+            log(`No hay nada más que preguntar.`);
+            printPlayCmdFinal(rl, numQuestionCorrect);            
+        }
+        else{
+            let index = Math.round(Math.random() * (idQuickToAsk.length - 1));
+            let quiz = model.getByIndex(idQuickToAsk[index]);
+            rl.question(colorize(quiz.question + '? ', 'red'), answer => {
+                if (checkResult(answer, quiz.answer) === CORRECTA){
+                    idQuickToAsk.splice(index, 1);
+                    log(`CORRECTO - Lleva ${++numQuestionCorrect} aciertos.`);
+                    playOne();
+                }
+                else{
+                    log(`INCORRECTO.`);
+                    printPlayCmdFinal(rl, numQuestionCorrect);
+                }
+            });
+        }
+    };
+    playOne();
+};
+
+const printPlayCmdFinal = (rl, numQuestionCorrect) => {
+    log(`Fin del juego. Aciertos: ${numQuestionCorrect}`);
+    biglog(`${numQuestionCorrect}`, 'magenta');
     rl.prompt();
 };
 
